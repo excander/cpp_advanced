@@ -3,62 +3,62 @@
 
 using namespace std;
 
-char curlex;
-void getlex(void);
-int expr(void);
-int add(void);
-int mult(void);
-string str;
+char getlex(string &str);
+int expr(string &str, char &curlex);
+int add(string &str, char &curlex);
+int mult(string &str, char &curlex);
 size_t ind = 0;
 
-char my_getchar(){
-	if (ind < str.size())
-		return str[ind++];
-	else {
-		return '\n';
-	}
+char my_getchar(string &str){
+    if (ind < str.size())
+        return str[ind++];
+    else {
+        return '\n';
+    }
 }
 
-void getlex(){
-    while ( (curlex = my_getchar()) == ' ' );
+char getlex(string &str){
+    char curlex;
+    while ( (curlex = my_getchar(str)) == ' ' );
+    return curlex;
 }
 
-int expr(){
-    int e = add();
+int expr(string &str, char &curlex){
+    int e = add(str, curlex);
     while (curlex == '+' || curlex == '-') {
         if (curlex == '+') {
-            getlex();
-            e += add();
+            curlex = getlex(str);
+            e += add(str, curlex);
         }
         else if (curlex == '-') {
-            getlex();
-            e -= add();
+            curlex = getlex(str);
+            e -= add(str, curlex);
         }
     }
     return e;
 }
 
-int add(){
-    int a=mult();
+int add(string &str, char &curlex){
+    int a=mult(str, curlex);
     while (curlex == '*' || curlex == '/') {
         if (curlex == '*'){
-            getlex();
-            a *= mult();
+            curlex = getlex(str);
+            a *= mult(str, curlex);
         }
         else if (curlex == '/') {
-            getlex();
-            int t=mult();
+            curlex = getlex(str);
+            int t=mult(str, curlex);
             if (t)
                 a /= t;
             else{
-            	throw exception();
+                throw exception();
             }
         }
     }
     return a;
 }
 
-int mult(){
+int mult(string &str, char &curlex){
     int m;
     switch(curlex){
         case '0': case '1': case '2': case '3': case '4': case '5':
@@ -66,33 +66,35 @@ int mult(){
             m= curlex-'0';
             break;
         }
-        case '(': getlex(); m=expr();
+        case '(': curlex = getlex(str); m=expr(str, curlex);
             if (curlex == ')'){
                 break;
             }
-        case '-': getlex(); m=-1*mult();
-     			break;
+        case '-': curlex = getlex(str); m=-1*mult(str, curlex);
+                break;
         default : {
-        	throw exception();
+            throw exception();
         }
     }
     if (curlex!='\n' && curlex!='/'&& curlex!='*' && curlex!='+' && curlex!='-')
-        getlex();
+        curlex = getlex(str);
     return m;
 }
 
 int main(int argc, char* argv[]){
 
-	int res;
+    int res;
+    string str;
+    char curlex;
 
-	try{
+    try{
         if(argc != 2)
             throw exception();
         else {
-       	str = argv[1];
-        	getlex();
-    		res=expr();
-        	cout << res << endl;
+        str = argv[1];
+            curlex = getlex(str);
+            res=expr(str, curlex);
+            cout << res << endl;
         }
     }
     catch (std::exception){
