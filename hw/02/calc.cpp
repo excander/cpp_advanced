@@ -93,7 +93,7 @@ int main(int argc, char* argv[]){
             std::cout << res << std::endl;
         }
     }
-    catch (std::exception){
+    catch (const std::exception &e){
         std::cout << "error" << std::endl;
         return 1;
     }
