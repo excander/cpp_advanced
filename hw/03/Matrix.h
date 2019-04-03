@@ -9,22 +9,22 @@ private:
 public:
 	class Row {
 	private:
-		int *arr;
 		const size_t cols;
+		int *arr;
 
 	public:
 		Row (const size_t cols_, int *arr_)
 			: cols(cols_), arr(arr_)
 			{}
 
-		int& operator[](const int jnd){
+		int& operator[](const size_t jnd){
 			if (jnd >= cols || jnd < 0)
 				throw std::out_of_range("");
 
 			return arr[jnd];
 		}
 
-		int operator[](const int jnd) const{
+		int operator[](const size_t jnd) const{
 			if (jnd >= cols || jnd < 0)
 				throw std::out_of_range("");
 
@@ -45,14 +45,14 @@ public:
 		return this -> cols;
 	}
 
-	const Row operator[](const int ind) const{
+	const Row operator[](const size_t ind) const{
 		if (ind >= rows || ind < 0) 
 			throw std::out_of_range("");
 
 		return Row(cols, mtr + ind * cols);
 	}
 
-	Row operator[](const int ind){
+	Row operator[](const size_t ind){
 		if (ind >= rows || ind < 0) 
 			throw std::out_of_range("");
 
