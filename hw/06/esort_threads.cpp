@@ -8,6 +8,16 @@
 #include <functional>
 #include <cmath>
 #include <thread>
+#include <limits>    
+#include <stdexcept> 
+
+int Uint64_tToInt(uint64_t u){
+    if (u > std::numeric_limits<int>::max()){
+        throw std::overflow_error(
+            "uint64_t value cannot be stored in a variable of type int.");
+    }
+    return static_cast<int>(u);
+}
 
 int tell_size(const std::string &filePath){
     // возвращает количество чисел в filePath
@@ -19,7 +29,7 @@ int tell_size(const std::string &filePath){
     fsize = file.tellg() - fsize;
     file.close();
 
-    return (int)(fsize / sizeof(uint64_t));
+    return Uint64_tToInt(fsize / sizeof(uint64_t));
 }
 
 void merge(const std::string &ifilename, const std::string &of1name, const std::string &of2name, int N, int k){
