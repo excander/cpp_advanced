@@ -9,7 +9,7 @@
 #include <cmath>
 #include <thread>
 
-int tell_size(std::string filePath){
+int tell_size(const std::string &filePath){
     // возвращает количество чисел в filePath
     std::streampos fsize = 0;
     std::ifstream file(filePath, std::ios::binary);
@@ -19,10 +19,10 @@ int tell_size(std::string filePath){
     fsize = file.tellg() - fsize;
     file.close();
 
-    return fsize / sizeof(uint64_t);
+    return (int)(fsize / sizeof(uint64_t));
 }
 
-void merge(std::string &ifilename, std::string &of1name, std::string &of2name, int N, int k){
+void merge(const std::string &ifilename, const std::string &of1name, const std::string &of2name, int N, int k){
     std::ofstream f_(ifilename, std::ios::binary);
     std::ifstream f_1(of1name, std::ios::binary);
     std::ifstream f_2(of2name, std::ios::binary);
@@ -74,7 +74,7 @@ void merge(std::string &ifilename, std::string &of1name, std::string &of2name, i
     }
 }
 
-void separate(std::string &ifilename, std::string &of1name, std::string &of2name, int N){
+void separate(const std::string &ifilename, const std::string &of1name, const std::string &of2name, int N){
     uint64_t s1, s2;
 
     int flag1,flag2;
@@ -114,7 +114,7 @@ void separate(std::string &ifilename, std::string &of1name, std::string &of2name
     }
 }
 
-void divide_file(std::string &ifilename, std::string &of1name, std::string &of2name, int N){
+void divide_file(const std::string &ifilename, const std::string &of1name, const std::string &of2name, int N){
     // как separate, только выполняется 1 раз и не вызывает merge
     uint64_t s1, s2;
 
@@ -163,12 +163,20 @@ int main(int argc, char **argv)
     std::string if2name = "if2.bin";
     divide_file(ifilename, if1name, if2name, N);
 
-    std::thread t1(separate, ref(if1name), ref(of1name), ref(of2name), tell_size(if1name));
-    std::thread t2(separate, ref(if2name), ref(of3name), ref(of4name), tell_size(if2name));
+    std::thread t1(&separate, cref(if1name), cref(of1name), cref(of2name), tell_size(if1name));
+    std::thread t2(&separate, cref(if2name), cref(of3name), cref(of4name), tell_size(if2name));
     t1.join();
     t2.join();
 
-    merge(ifilename, if1name, if2name, N, std::log2(N));
+    std::string ofilename = "out.bin";
+    merge(ofilename, if1name, if2name, N, std::log2(N));
+    
+    remove("of1.bin");
+    remove("of2.bin");
+    remove("of3.bin");
+    remove("of4.bin");
+    remove("if1.bin");
+    remove("if2.bin");
 
     return 0;
 }
