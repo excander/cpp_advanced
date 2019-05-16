@@ -11,15 +11,15 @@
 #include <limits>    
 #include <stdexcept> 
 
-int Uint64_tToInt(uint64_t u){
-    if (u > std::numeric_limits<int>::max()){
-        throw std::overflow_error(
-            "uint64_t value cannot be stored in a variable of type int.");
-    }
-    return static_cast<int>(u);
-}
+// int Uint64_tToInt(uint64_t u){
+//     if (u > std::numeric_limits<int>::max()){
+//         throw std::overflow_error(
+//             "uint64_t value cannot be stored in a variable of type int.");
+//     }
+//     return static_cast<int>(u);
+// }
 
-int tell_size(const std::string &filePath){
+uint64_t tell_size(const std::string &filePath){
     // возвращает количество чисел в filePath
     std::streampos fsize = 0;
     std::ifstream file(filePath, std::ios::binary);
@@ -29,7 +29,7 @@ int tell_size(const std::string &filePath){
     fsize = file.tellg() - fsize;
     file.close();
 
-    return Uint64_tToInt(fsize / sizeof(uint64_t));
+    return fsize / sizeof(uint64_t);
 }
 
 void merge(const std::string &ifilename, const std::string &of1name, const std::string &of2name, int N, int k){
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
     std::string of3name = "of3.bin";
     std::string of4name = "of4.bin";
 
-    int N = tell_size(ifilename);
+    uint64_t N = tell_size(ifilename);
 
     std::string if1name = "if1.bin";
     std::string if2name = "if2.bin";
